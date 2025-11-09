@@ -1,6 +1,5 @@
 org: nayeliguerrero
 service: api-pelicula
-
 provider:
   name: aws
   runtime: python3.12	
@@ -11,7 +10,6 @@ provider:
     role: arn:aws:iam::306083006368:role/LabRole	
   environment:
     TABLE_NAME: ${sls:stage}-t_peliculas
-
 functions:
   crear:
     handler: CrearPelicula.lambda_handler
@@ -20,8 +18,8 @@ functions:
           path: /pelicula/crear
           method: post
           cors: true
-          integration: lambda
-
+          # CAMBIO CRÍTICOO: Quitar 'integration: lambda' para usar Lambda Proxy por defecto
+          # O explícitamente poner: integration: lambda-proxy
 resources:
   Resources:
     TablaComentarios:
