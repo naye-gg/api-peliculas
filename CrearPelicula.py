@@ -54,8 +54,13 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 200,
-            'pelicula': pelicula,
-            'response': response
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            'body': json.dumps({
+                'pelicula': pelicula,
+                'mensaje': 'Película creada exitosamente'
+            })
         }
         
     except KeyError as e:
@@ -73,7 +78,12 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 400,
-            'error': f"Campo requerido faltante: {str(e)}"
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            'body': json.dumps({
+                'error': f"Campo requerido faltante: {str(e)}"
+            })
         }
         
     except ValueError as e:
@@ -91,7 +101,12 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 400,
-            'error': str(e)
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            'body': json.dumps({
+                'error': str(e)
+            })
         }
         
     except Exception as e:
@@ -109,5 +124,10 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 500,
-            'error': f"Error interno del servidor: {str(e)}"
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            'body': json.dumps({
+                'error': f"Error interno del servidor: {str(e)}"
+            })
         }
