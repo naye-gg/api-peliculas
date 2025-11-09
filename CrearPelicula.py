@@ -3,6 +3,7 @@ import uuid
 import os
 import json
 from datetime import datetime
+from decimal import Decimal
 
 def lambda_handler(event, context):
     try:
@@ -11,7 +12,6 @@ def lambda_handler(event, context):
             "tipo": "INFO",
             "log_datos": {
                 "mensaje": "Solicitud recibida",
-                "event": event,
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
@@ -47,29 +47,26 @@ def lambda_handler(event, context):
             "log_datos": {
                 "mensaje": "Película creada exitosamente",
                 "pelicula": pelicula,
-                "dynamodb_response": {
-                    "HTTPStatusCode": response['ResponseMetadata']['HTTPStatusCode'],
-                    "RequestId": response['ResponseMetadata']['RequestId']
-                },
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
         print(json.dumps(log_success))
         
+        # Return simplificado - solo datos serializables
         return {
             'statusCode': 200,
-            'pelicula': pelicula,
-            'mensaje': 'Película creada exitosamente'
+            'body': json.dumps({
+                'mensaje': 'Película creada exitosamente',
+                'pelicula': pelicula
+            })
         }
         
     except KeyError as e:
-        # Error de clave faltante
         log_error = {
             "tipo": "ERROR",
             "log_datos": {
                 "mensaje": f"Campo requerido faltante: {str(e)}",
                 "error_type": "KeyError",
-                "event": event,
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
@@ -77,7 +74,9 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 400,
-            'error': f"Campo requerido faltante: {str(e)}"
+            'body': json.dumps({
+                'error': f"Campo requerido faltante: {str(e)}"
+            })
         }
         
     except ValueError as e:
@@ -87,7 +86,6 @@ def lambda_handler(event, context):
             "log_datos": {
                 "mensaje": str(e),
                 "error_type": "ValueError",
-                "event": event,
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
@@ -95,7 +93,9 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 400,
-            'error': str(e)
+            'body': json.dumps({
+                'error': str(e)
+            })
         }
         
     except Exception as e:
@@ -105,7 +105,6 @@ def lambda_handler(event, context):
             "log_datos": {
                 "mensaje": f"Error inesperado: {str(e)}",
                 "error_type": type(e).__name__,
-                "event": event,
                 "timestamp": datetime.utcnow().isoformat()
             }
         }
@@ -113,5 +112,7 @@ def lambda_handler(event, context):
         
         return {
             'statusCode': 500,
-            'error': f"Error interno del servidor: {str(e)}"
+            'body': json.dumps({
+                'error': f"Error interno del servidor: {str(e)}"
+            })
         }

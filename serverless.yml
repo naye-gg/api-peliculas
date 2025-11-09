@@ -18,7 +18,7 @@ functions:
           path: /pelicula/crear
           method: post
           cors: true
-          # CAMBIO CRÍTICOO: Quitar 'integration: lambda' para usar Lambda Proxy por defecto
+          # CAMBIO CRÍTICO: Quitar 'integration: lambda' para usar Lambda Proxy por defecto
           # O explícitamente poner: integration: lambda-proxy
 resources:
   Resources:
