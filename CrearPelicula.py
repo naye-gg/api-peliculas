@@ -17,12 +17,16 @@ def lambda_handler(event, context):
         }
         print(json.dumps(log_info))
         
-        # Validación de datos de entrada
+        # Parsear el body si viene como string (Lambda Proxy)
         if 'body' not in event:
             raise ValueError("El campo 'body' es requerido en el evento")
         
-        tenant_id = event['body']['tenant_id']
-        pelicula_datos = event['body']['pelicula_datos']
+        body = event['body']
+        if isinstance(body, str):
+            body = json.loads(body)
+        
+        tenant_id = body['tenant_id']
+        pelicula_datos = body['pelicula_datos']
         nombre_tabla = os.environ["TABLE_NAME"]
         
         # Proceso
